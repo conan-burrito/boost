@@ -1,0 +1,17 @@
+# swap
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+
+# temporary
+.netrwhist
+*~
+
+# Python compiled
+*.pyc
+__pycache__
+
+**/build
+
+**/.DS_Store
+
+.idea
