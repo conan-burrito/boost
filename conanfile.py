@@ -151,6 +151,9 @@ class BoostConan(ConanFile):
             else:
                 flags = flag
 
+        if str(self.settings.os) in ['watchOS', 'tvOS']:
+            # 'sigaltstack' is unavailable: not available on tvOS / watchOS
+            append('-DBOOST_TEST_DISABLE_ALT_STACK=1')
 
         if self.settings.get_safe("compiler.cppstd"):
             append(cppstd_flag(self.settings))
@@ -215,7 +218,7 @@ class BoostConan(ConanFile):
                 return "%s.0" % compiler_version
         elif compiler == "gcc" and tools.is_apple_os(self.settings.os):
             return compiler_version
-        elif compiler == "gcc" and major >= 5:
+        elif compiler == "gcc" and int(major) >= 5:
             return str(major)
 
         return compiler_version
@@ -694,6 +697,10 @@ class BoostConan(ConanFile):
             if self.options.error_code_header_only:
                 self.cpp_info.defines.append("BOOST_ERROR_CODE_HEADER_ONLY")
                 self.cpp_info.defines.append("BOOST_SYSTEM_NO_LIB")
+
+        if str(self.settings.os) in ['watchOS', 'tvOS']:
+            # 'sigaltstack' is unavailable: not available on tvOS / watchOS
+            self.cpp_info.defines.append("BOOST_TEST_DISABLE_ALT_STACK=1")
 
         boost_root = self.package_folder
         boost_include = os.path.join(boost_root, 'include')
