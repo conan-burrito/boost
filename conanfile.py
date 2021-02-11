@@ -44,7 +44,8 @@ class BoostConan(ConanFile):
         'multithreading': [True, False],
         'segmented_stacks': [True, False],
         'debug_level': [i for i in range(0, 14)],
-        'extra_b2_flags': 'ANY'
+        'extra_b2_flags': 'ANY',
+        'visibility': ['global', 'protected', 'hidden'],
     }
     options.update({"without_%s" % libname: [True, False] for libname in LIB_LIST})
 
@@ -61,7 +62,8 @@ class BoostConan(ConanFile):
         'multithreading': True,
         'segmented_stacks': False,
         'debug_level': 0,
-        'extra_b2_flags': 'None'
+        'extra_b2_flags': 'None',
+        'visibility': 'hidden',
     }
 
     for x in LIB_LIST:
@@ -490,6 +492,7 @@ class BoostConan(ConanFile):
 
         # For details https://boostorg.github.io/build/manual/master/index.html
         flags.append("threading=%s" % ("single" if not self.options.multithreading else "multi" ))
+        flags.append("visibility=%s" % self.options.visibility)
 
         flags.append("link=%s" % ("static" if not self.options.shared else "shared"))
         if self.settings.build_type == "Debug":
