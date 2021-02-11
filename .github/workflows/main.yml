@@ -1,7 +1,7 @@
 name: build
 
 env:
-  CONAN_REFERENCE: "boost/1.74.0"
+  CONAN_REFERENCE: "boost/1.75.0"
   CONAN_USERNAME: "conan-burrito"
   CONAN_UPLOAD: "https://conan.yobasoft.de"
   CONAN_STABLE_BRANCH_PATTERN: "release/*"
