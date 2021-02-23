@@ -559,6 +559,7 @@ class BoostConan(ConanFile):
 
             # Bitcode flag will be added automatically in darwin-toolchain
             # cxx_flags.append("-fembed-bitcode")
+            pass
 
         cxx_flags = 'cxxflags="%s"' % " ".join(cxx_flags) if cxx_flags else ""
         flags.append(cxx_flags)
