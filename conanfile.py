@@ -552,9 +552,13 @@ class BoostConan(ConanFile):
                 cxx_flags.append(tools.apple_deployment_target_flag(self.settings.os, self.settings.os.version))
 
         if self.settings.os == "iOS":
-            if self.options.multithreading:
-                cxx_flags.append("-DBOOST_AC_USE_PTHREADS")
-                cxx_flags.append("-DBOOST_SP_USE_PTHREADS")
+            # One of the *_USE_PTHREADS flags causes iOS applications to crash when using boost::log
+            # if self.options.multithreading:
+            #     cxx_flags.append("-DBOOST_AC_USE_PTHREADS")
+            #     cxx_flags.append("-DBOOST_SP_USE_PTHREADS")
+
+            # Bitcode flag will be added automatically in darwin-toolchain
+            # cxx_flags.append("-fembed-bitcode")
 
         cxx_flags = 'cxxflags="%s"' % " ".join(cxx_flags) if cxx_flags else ""
         flags.append(cxx_flags)
