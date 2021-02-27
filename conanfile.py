@@ -549,7 +549,9 @@ class BoostConan(ConanFile):
 
         if tools.is_apple_os(self.settings.os):
             if self.settings.get_safe("os.version"):
-                cxx_flags.append(tools.apple_deployment_target_flag(self.settings.os, self.settings.os.version))
+                sdk = self.settings.get_safe('os.sdk')
+                subsystem = self.settings.get_safe('os.subsystem')
+                cxx_flags.append(tools.apple_deployment_target_flag(self.settings.os, self.settings.os.version, sdk, subsystem, self.settings.arch))
 
         if self.settings.os == "iOS":
             # One of the *_USE_PTHREADS flags causes iOS applications to crash when using boost::log
