@@ -241,6 +241,12 @@ class BoostConan(ConanFile):
         for patch in self.conan_data["patches"].get(self.version, []):
             tools.patch(**patch)
 
+    def configure(self):
+        if self.settings.os == 'Emscripten':
+            self.output.warn('Forscing header-only builds for Emscripten')
+            self.options.shared = True
+            self.options.header_only = True
+
     def build(self):
         if self.options.header_only:
             self.output.warn("Header only package, skipping build")
@@ -504,15 +510,28 @@ class BoostConan(ConanFile):
             if getattr(self.options, "without_%s" % libname):
                 flags.append("--without-%s" % libname)
 
+        # flags.append("toolset=%s" % self._toolset)
+
         # CXX FLAGS
         cxx_flags = []
         if self.settings.get_safe("compiler.cppstd"):
             cxx_flags.append(cppstd_flag(self.settings))
 
+        if self.options.multithreading and self.settings.os == 'Emscripten':
+            # NOTE: I tried to compile boost for emscripten and failed. Here are some notes:
+            # - source/source_subfolder/tools/build/src/tools/emscripten.jam needs a patch to fix SEARCHED_LIBS error:
+            #   import generators;
+            #   generators.override emscripten.searched-lib-generator : searched-lib-generator ;
+            # - tests, coroutines and fibers components don't work
+            # - we have to build shared libraries otherwise log won't link
+            cxx_flags.append('-pthread')
+            cxx_flags.append('-fexceptions')
+
         # fPIC DEFINITION
         if self.settings.os != "Windows":
             if self.options.fPIC:
                 cxx_flags.append("-fPIC")
+
         if self.settings.build_type == "RelWithDebInfo":
             if self.settings.compiler == "gcc" or "clang" in str(self.settings.compiler):
                 cxx_flags.append("-g")
@@ -520,7 +539,7 @@ class BoostConan(ConanFile):
                 cxx_flags.append("/Z7")
 
         # Standalone toolchain fails when declare the std lib
-        if self.settings.os != "Android" and self.settings.os != "Emscripten":
+        if self.settings.os not in ["Android", "Emscripten"]:
             try:
                 if self._gnu_cxx11_abi:
                     flags.append("define=_GLIBCXX_USE_CXX11_ABI=%s" % self._gnu_cxx11_abi)

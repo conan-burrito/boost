@@ -12,6 +12,7 @@ int main(int argc, const char * const argv[]) {
     }
 
     std::for_each(values.begin(), values.end(), std::cout << _1 * 3 << " " );
+    std::cout << std::endl;
 
     return 0;
 }

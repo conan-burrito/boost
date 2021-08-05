@@ -33,10 +33,13 @@ class DefaultNameConan(ConanFile):
         cmake.build()
 
     def test(self):
+        if self.settings.os == 'Emscripten':
+            self.run('node %s' % os.path.join("bin", "lambda_exe.js 1 2 3"), run_environment=True)
+
         if tools.cross_building(self.settings):
             return
 
-        self.run(os.path.join("bin", "lambda_exe"), run_environment=True)
+        self.run(os.path.join("bin", "lambda_exe 1 2 3"), run_environment=True)
         if self.options["boost"].header_only:
             return
 
