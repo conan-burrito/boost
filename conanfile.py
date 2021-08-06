@@ -241,11 +241,11 @@ class BoostConan(ConanFile):
         for patch in self.conan_data["patches"].get(self.version, []):
             tools.patch(**patch)
 
-    def configure(self):
-        if self.settings.os == 'Emscripten':
-            self.output.warn('Forscing header-only builds for Emscripten')
-            self.options.shared = True
-            self.options.header_only = True
+    # def configure(self):
+    #     if self.settings.os == 'Emscripten':
+    #         self.output.warn('Forscing header-only builds for Emscripten')
+    #         self.options.shared = True
+    #         self.options.header_only = True
 
     def build(self):
         if self.options.header_only:
@@ -524,8 +524,9 @@ class BoostConan(ConanFile):
             #   generators.override emscripten.searched-lib-generator : searched-lib-generator ;
             # - tests, coroutines and fibers components don't work
             # - we have to build shared libraries otherwise log won't link
-            cxx_flags.append('-pthread')
-            cxx_flags.append('-fexceptions')
+            # cxx_flags.append('-pthread')
+            # cxx_flags.append('-fexceptions')
+            pass
 
         # fPIC DEFINITION
         if self.settings.os != "Windows":
