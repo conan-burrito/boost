@@ -3,8 +3,8 @@ name: build
 env:
   CONAN_REFERENCE: "boost/1.75.0"
   CONAN_USERNAME: "conan-burrito"
-  CONAN_UPLOAD: "https://conan.yobasoft.de"
   CONAN_STABLE_BRANCH_PATTERN: "release/*"
+  CONAN_UPLOAD: "${{ secrets.CONAN_UPLOAD }}"
   CONAN_LOGIN_USERNAME: "${{ secrets.CONAN_LOGIN_USERNAME }}"
   CONAN_PASSWORD: "${{ secrets.CONAN_PASSWORD }}"
 
@@ -39,13 +39,13 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-            python -m pip install --upgrade pip setuptools wheel
-            pip install conan conan_package_tools
-            conan remote disable conan-center
-            conan config install ${{ github.workspace }}/profiles/settings.yml
+          python -m pip install --upgrade pip setuptools wheel
+          pip install conan conan_package_tools
+          conan remote disable conancenter
+          conan config install ${{ github.workspace }}/profiles/settings.yml
       - name: Build native
         run:  |
-          python .ci/build-default.py
+          python .ci/build-${{ matrix.os }}.py
       - name: Build WASM
         if: ${{ ! startsWith(matrix.os, 'windows') }}
         env:
